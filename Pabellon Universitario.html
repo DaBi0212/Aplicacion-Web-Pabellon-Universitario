@@ -1,0 +1,2249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pabellon Universitario - BUAP</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #003b5c; /* BUAP blue */
+            --secondary-color: #e30613; /* BUAP red */
+            --accent-color: #ffcc00; /* BUAP yellow */
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .buap-blue {
+            background-color: var(--primary-color);
+        }
+        
+        .buap-red {
+            background-color: var(--secondary-color);
+        }
+        
+        .buap-yellow {
+            background-color: var(--accent-color);
+        }
+        
+        .text-buap-blue {
+            color: var(--primary-color);
+        }
+        
+        .text-buap-red {
+            color: var(--secondary-color);
+        }
+        
+        .btn-buap {
+            background-color: var(--primary-color);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-buap:hover {
+            background-color: #00253a;
+            transform: translateY(-2px);
+        }
+        
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .loader {
+            border-top-color: var(--primary-color);
+            animation: spinner 1.5s linear infinite;
+        }
+        
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .auth-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .payment-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .payment-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Custom dropdown styling */
+        .custom-dropdown {
+            position: relative;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 0.5rem;
+        }
+        
+        .dropdown-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-white bg-opacity-80 z-50 flex items-center justify-center">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+        <p class="ml-3 text-buap-blue font-semibold">Cargando...</p>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="buap-blue shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center">
+                            <img class="h-12 w-auto" src="https://galeria.arpa.buap.mx/wp-content/uploads/2022/10/LogoBuap-1024x1022.png" alt="BUAP Logo">
+                            <span class="ml-3 text-white font-bold text-xl">Pabellon Universitario</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-center space-x-4">
+                        <a href="#" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" id="nav-home">Inicio</a>
+                        <a href="#" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" id="nav-products">Productos</a>
+                        <a href="#" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" id="nav-faculties">Facultades</a>
+                        <a href="#" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" id="nav-contact">Contacto</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="relative">
+                        <button id="user-menu-button" class="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                            <img class="h-8 w-8 rounded-full" src="https://ui-avatars.com/api/?name=Usuario&background=0D8ABC&color=fff" alt="User profile">
+                        </button>
+                        <div id="user-dropdown" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" id="login-button">Iniciar sesión</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" id="register-button">Registrarse</a>
+                            <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" id="account-button">Mi cuenta</a>
+                            <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" id="orders-button">Mis pedidos</a>
+                            <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" id="logout-button">Cerrar sesión</a>
+                        </div>
+                    </div>
+                    <a href="#" class="ml-4 px-3 py-2 rounded-md text-sm font-medium bg-white text-buap-blue flex items-center" id="cart-button">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="ml-1" id="cart-count">0</span>
+                    </a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-white hover:text-gray-300 focus:outline-none focus:text-gray-300">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="hidden md:hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#" class="text-white hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Inicio</a>
+                <a href="#" class="text-white hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Productos</a>
+                <a href="#" class="text-white hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Facultades</a>
+                <a href="#" class="text-white hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Contacto</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Home page content -->
+        <div id="home-page" class="block">
+            <!-- Hero Section -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+                <div class="md:flex">
+                    <div class="md:flex-shrink-0 p-8 flex flex-col justify-center">
+                        <h1 class="text-3xl md:text-4xl font-bold text-buap-blue mb-4">Bienvenido al Pabellon Universitario Online</h1>
+                        <p class="text-gray-600 mb-6">Tu tienda en línea oficial de la Benemérita Universidad Autónoma de Puebla</p>
+                        <div>
+                            <button class="btn-buap px-6 py-3 rounded-md font-medium shadow-md" id="explore-button">Explorar productos</button>
+                        </div>
+                    </div>
+                    <div class="md:flex-1">
+                        <img class="h-full w-full object-cover" src="https://static.wixstatic.com/media/a5a6d5_8756f1a3830a444fb4efdfc2bd391243~mv2.jpg/v1/fill/w_2500,h_1666,al_c/a5a6d5_8756f1a3830a444fb4efdfc2bd391243~mv2.jpg" alt="BUAP Campus">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Categories -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-buap-blue mb-6">Categorías destacadas</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://img.freepik.com/fotos-premium/piso-escritorio-madera-dos-portatiles-camara-tableta-varios-telefonos_14117-671632.jpg" alt="Dispositivos electrónicos" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Electrónica</h3>
+                            <p class="text-gray-600 mt-2">Encuentra los mejores dispositivos y gadgets</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://bcncoolhunter.com/storage/2019/06/tiendas-online-de-ropa.jpg" alt="Ropa y accesorios" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Ropa y accesorios</h3>
+                            <p class="text-gray-600 mt-2">Viste con el orgullo de la BUAP</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" alt="Libros y material académico" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Libros y material académico</h3>
+                            <p class="text-gray-600 mt-2">Todo lo que necesitas para tus clases</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://media.gotrendier.mx/media/p/2021/06/11/n_e6cb459e-cac0-11eb-ba2d-1229d990630b.jpeg" alt="Artesanías y souvenirs" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Artesanías y souvenirs</h3>
+                            <p class="text-gray-600 mt-2">Recuerdos y piezas hechas por estudiantes</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Products -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-buap-blue mb-6">Productos destacados</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="featured-products">
+                    <!-- Products will be dynamically loaded here -->
+                </div>
+            </div>
+
+            <!-- Featured Faculties -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-buap-blue mb-6">Facultades destacadas</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://altertecnia.com/wp-content/uploads/ingenieria-de-producto.jpeg" alt="Facultad de Ingeniería" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Ingeniería</h3>
+                            <p class="text-gray-600 mt-2">Proyectos y productos tecnológicos desarrollados por estudiantes.</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://i.ytimg.com/vi/wnoWvXoGLdw/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBUWh7hj2EUToXWVzQElBrMfzRDbw" alt="Facultad de Artes" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Artes</h3>
+                            <p class="text-gray-600 mt-2">Obras artísticas, clases de danza, musica y más.</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://ciencias.uchile.cl/dam/jcr:77d5c6b3-3b86-4dfe-8ac6-d06740f5d425/cienciasbiologicas.jpg" alt="Facultad de Ciencias Biológicas" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Ciencias Biológicas</h3>
+                            <p class="text-gray-600 mt-2">Productos orgánicos y sustentables elaborados por estudiantes.</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products page content -->
+        <div id="products-page" class="hidden">
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <h1 class="text-2xl font-bold text-buap-blue mb-4 md:mb-0">Todos los productos</h1>
+                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                        <div class="relative flex-grow">
+                            <input type="text" id="search-input" placeholder="Buscar productos..." class="w-full pl-10 pr-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <div class="absolute left-3 top-2.5 text-gray-400">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+                        <button id="filter-button" class="btn-buap px-4 py-2 rounded-md flex items-center justify-center">
+                            <i class="fas fa-filter mr-2"></i> Filtros
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Filters section -->
+                <div id="filters-panel" class="hidden bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <h3 class="font-semibold text-buap-blue mb-3">Rango de precio</h3>
+                            <div class="flex items-center">
+                                <input type="number" id="price-min" placeholder="Min" class="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <span class="mx-2">-</span>
+                                <input type="number" id="price-max" placeholder="Max" class="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-buap-blue mb-3">Categoría</h3>
+                            <select id="category-filter" class="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Todas las categorías</option>
+                                <option value="electronica">Electrónica</option>
+                                <option value="ropa">Ropa y accesorios</option>
+                                <option value="libros">Libros y material académico</option>
+                                <option value="artesanias">Artesanías y souvenirs</option>
+                                <option value="servicios">Servicios</option>
+                            </select>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-buap-blue mb-3">Facultad</h3>
+                            <select id="faculty-filter" class="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Todas las facultades</option>
+                                <option value="ingenieria">Facultad de Ingeniería</option>
+                                <option value="artes">Facultad de Artes</option>
+                                <option value="ciencias">Facultad de Ciencias</option>
+                                <option value="medicina">Facultad de Medicina</option>
+                                <option value="derecho">Facultad de Derecho</option>
+                                <option value="quimica">Facultad de Ciencias Químicas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end mt-4">
+                        <button id="clear-filters" class="px-4 py-2 text-gray-700 rounded-md border border-gray-300 hover:bg-gray-100 mr-3">Limpiar filtros</button>
+                        <button id="apply-filters" class="btn-buap px-4 py-2 rounded-md">Aplicar filtros</button>
+                    </div>
+                </div>
+                
+                <!-- Product grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="products-grid">
+                    <!-- Products will be dynamically loaded here -->
+                </div>
+                
+                <!-- Pagination -->
+                <div class="mt-10 flex justify-center">
+                    <nav class="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Anterior</span>
+                            <i class="fas fa-chevron-left h-5 w-5"></i>
+                        </a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-buap-blue hover:bg-gray-50">1</a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">2</a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">3</a>
+                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">8</a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">9</a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">10</a>
+                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Siguiente</span>
+                            <i class="fas fa-chevron-right h-5 w-5"></i>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Faculties page content -->
+        <div id="faculties-page" class="hidden">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-buap-blue mb-6">Facultades de la BUAP</h1>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://altertecnia.com/wp-content/uploads/ingenieria-de-producto.jpeg" alt="Facultad de Ingeniería" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Ingeniería</h3>
+                            <p class="text-gray-600 mt-2">Proyectos tecnológicos, diseño de circuitos, prototipos mecánicos, automatización y soluciones innovadoras creadas por los estudiantes de ingeniería.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 24</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://i.ytimg.com/vi/wnoWvXoGLdw/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBUWh7hj2EUToXWVzQElBrMfzRDbw" alt="Facultad de Artes" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Artes</h3>
+                            <p class="text-gray-600 mt-2">Puestas en escena, presentaciones de danza, composiciones musicales, clases de música, interpretación teatral y estudios etnocoreológicos realizados por los estudiantes de artes.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 31</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://ciencias.uchile.cl/dam/jcr:77d5c6b3-3b86-4dfe-8ac6-d06740f5d425/cienciasbiologicas.jpg" alt="Facultad de Ciencias Biológicas" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Ciencias Biológicas</h3>
+                            <p class="text-gray-600 mt-2">Productos orgánicos, sustentables y eco-amigables elaborados por los estudiantes de biología.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 18</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://www.nosequeestudiar.net/site/assets/files/1695521/de-que-se-trata-la-carrera-de-medicina.jpg" alt="Facultad de Medicina" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Medicina</h3>
+                            <p class="text-gray-600 mt-2">Material médico, guías de estudio, tutorías y servicios ofrecidos por estudiantes de medicina.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 12</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://concepto.de/wp-content/uploads/2012/03/derecho-ley-e1552664252875.jpg" alt="Facultad de Derecho y Ciencias Politicas" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Derecho y Ciencias Politicas</h3>
+                            <p class="text-gray-600 mt-2">Manuales jurídicos, asesorías legales y servicios ofrecidos por estudiantes de derecho.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 9</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://economiavirtual.com.py/web/img/noticias/23747.jpg" alt="Facultad de Ciencias Químicas" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Ciencias Químicas</h3>
+                            <p class="text-gray-600 mt-2">Productos cosméticos naturales, jabones artesanales y productos químicos desarrollados por estudiantes.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://www.cancun.tecnm.mx/wp-content/uploads/2022/06/WhatsApp-Image-2022-06-09-at-6.26.36-PM.jpeg" alt="Facultad de Arquitectura" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Arquitectura</h3>
+                            <p class="text-gray-600 mt-2">Planos arquitectónicos, maquetas, diseños de interiores y proyectos urbanísticos creados por los estudiantes de arquitectura..</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 9</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://imgs.elpais.com.uy/dims4/default/cb3970b/2147483647/strip/true/crop/1242x854+19+0/resize/1440x990!/quality/90/?url=https%3A%2F%2Fel-pais-uruguay-production-web.s3.us-east-1.amazonaws.com%2Fbrightspot%2Fuploads%2F2020%2F09%2F01%2F5f4e94393e0d5.jpeg" alt="Facultad de Ciencias de la Computacion" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Ciencias de la Computacion</h3>
+                            <p class="text-gray-600 mt-2">Software, aplicaciones, desarrollo web, asesorías en programación y soluciones tecnológicas creadas por los estudiantes de computación.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://www.vencoel.com/wp-content/uploads/2023/11/normativas-electronica.jpg" alt="Facultad de Ciencias de la Electronica" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Ciencias de la Electronica</h3>
+                            <p class="text-gray-600 mt-2">Circuitos electrónicos, sistemas embebidos, automatización, robótica y dispositivos tecnológicos desarrollados por los estudiantes de electrónica.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://cdn.euroinnova.edu.es/img/subidasEditor/matematico02-1649185886.webp" alt="Facultad de Ciencias Fisico Matematico" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Ciencias Fisico Matematico</h3>
+                            <p class="text-gray-600 mt-2">Modelos matemáticos, simulaciones, análisis de datos, desarrollo de algoritmos y material educativo elaborado por los estudiantes de físico-matemáticas.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://www.queestudiar.org/wp-content/uploads/2019/12/quimico-712x350.jpg" alt="Facultad de Ingenieria Quimica" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Ingenieria Quimica</h3>
+                            <p class="text-gray-600 mt-2">Procesos industriales, desarrollo de materiales, productos químicos, cosméticos y soluciones sustentables creadas por los estudiantes de ingeniería química.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://es.snhu.edu/img/article/que-es-la-administracion-de-proyectos-y-cuales-son-sus-fases.webp" alt="Facultad de Administración" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Administración</h3>
+                            <p class="text-gray-600 mt-2"> Planes de negocio, estrategias de marketing, consultorías financieras y asesorías en gestión empresarial ofrecidas por los estudiantes de administración.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://ceusjic.edu.mx/wp-content/uploads/2020/04/comunicacion-600x400.jpg" alt="Facultad de Comunicacion" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Comunicacion</h3>
+                            <p class="text-gray-600 mt-2"> Producción audiovisual, diseño publicitario, estrategias de comunicación, redacción de contenidos y gestión de medios creados por los estudiantes de comunicación.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://curriculoluzcol.wordpress.com/wp-content/uploads/2015/02/contadores1.jpg" alt="Facultad de Contaduría Pública" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Contaduría Pública</h3>
+                            <p class="text-gray-600 mt-2"> Asesorías contables, gestión financiera, análisis de costos, auditoría y servicios fiscales ofrecidos por los estudiantes de contaduría.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://definicion.de/wp-content/uploads/2008/03/economia-1.jpg" alt="Facultad de Economia" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Economia</h3>
+                            <p class="text-gray-600 mt-2"> Análisis de mercados, consultorías financieras, estudios económicos, estrategias de inversión y planificación empresarial realizadas por los estudiantes de economía.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://www.cev.com/wp-content/uploads/2022/11/brushes-g6b327d16c_1920.jpg" alt="Facultad de Artes Plasticas y Audiovisuales" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Artes Plasticas y Audiovisuales</h3>
+                            <p class="text-gray-600 mt-2"> Obras visuales, ilustraciones, esculturas, producciones cinematográficas y fotografías creados por los estudiantes de artes plásticas y audiovisuales.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://inposhuac.mx/wp-content/uploads/2023/05/Inposhuac_Maestria-en-Filosofia-y-Letras-768x512.jpg" alt="Facultad de Filosofia y Letras" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Filosofia y Letras</h3>
+                            <p class="text-gray-600 mt-2"> Ensayos, libros, asesorías literarias y análisis filosóficos elaborados por los estudiantes de filosofía y letras.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/media/image/2020/09/idiomas-2057567.jpg?tf=3840x" alt="Facultad de Lenguas" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Lenguas</h3>
+                            <p class="text-gray-600 mt-2"> Traducciones, clases de idiomas, corrección de textos, interpretación y asesorías lingüísticas ofrecidas por los estudiantes de lenguas.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://staticnew-prod.topdoctors.mx/files/Image/large/74d355a17b7eda074ec8d97430ce4987.jpg" alt="Facultad de Psicologia" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Psicologia</h3>
+                            <p class="text-gray-600 mt-2"> Terapias psicológicas, asesorías en desarrollo personal, evaluaciones psicológicas, y programas de bienestar emocional creados por los estudiantes de psicología.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://blog.uclm.es/ricardofdez/wp-content/uploads/sites/10/2014/04/06running_span-articleLarge-v21.jpg" alt="Facultad de Cultura Fisica" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Cultura Fisica</h3>
+                            <p class="text-gray-600 mt-2"> Programas de entrenamiento, asesorías en nutrición deportiva, planificación de rutinas de ejercicio y rehabilitación física ofrecidos por los estudiantes de cultura física.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://www.emagister.com.mx/mx/albums/5/8/6/1/6/xxl_cropped_f16e5c26823486badca931244c592eee.jpg" alt="Facultad de Medicina Veterinaria y Zootecnia" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Medicina Veterinaria y Zootecnia</h3>
+                            <p class="text-gray-600 mt-2">Atención y cuidado animal, asesorías en nutrición, productos para mascotas y servicios zootécnicos ofrecidos por los estudiantes de veterinaria.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://boletin.buap.mx/sites/default/files/B%20Jardi%CC%81n%20Bota%CC%81nico.jpg" alt="Facultad de Ingenieria Agrohidraulica" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Ciencias Agricolas y Pecuarias</h3>
+                            <p class="text-gray-600 mt-2">Sistemas de riego, manejo sustentable del agua, producción agrícola, desarrollo agroindustrial y soluciones hidráulicas creadas por los estudiantes de ingeniería agrohidráulica.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://ecuador.unir.net/wp-content/uploads/sites/8/2021/04/asian-female-nurse-isolated-on-white-background-concept-of-medical-picture-id1272621878-1.jpg" alt="Facultad de Enfermeria" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Enfermeria</h3>
+                            <p class="text-gray-600 mt-2">Cuidados de enfermería, asesorías en salud, material médico, primeros auxilios y promoción del bienestar ofrecidos por los estudiantes de enfermería.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
+                        <img src="https://almaradental.es/wp-content/uploads/2019/07/ventajas-de-la-odontologia-general-1080x600-1.jpg" alt="Facultad de Estomatologia" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-buap-blue">Facultad de Estomatologia</h3>
+                            <p class="text-gray-600 mt-2">Material odontológico, asesorías en salud bucal, limpiezas dentales, prótesis y tratamientos preventivos ofrecidos por los estudiantes de estomatología.</p>
+                            <p class="text-gray-600 mt-2"><strong>Productos:</strong> 15</p>
+                            <button class="mt-4 text-buap-blue font-medium hover:underline">Ver productos</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact page content -->
+        <div id="contact-page" class="hidden">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-buap-blue mb-6">Contacto</h1>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="md:flex">
+                        <div class="md:flex-1 p-6">
+                            <h2 class="text-xl font-semibold text-buap-blue mb-4">Envíanos un mensaje</h2>
+                            <form>
+                                <div class="mb-4">
+                                    <label for="name" class="block text-gray-700 mb-2">Nombre completo</label>
+                                    <input type="text" id="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="email" class="block text-gray-700 mb-2">Correo electrónico</label>
+                                    <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="subject" class="block text-gray-700 mb-2">Asunto</label>
+                                    <input type="text" id="subject" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="message" class="block text-gray-700 mb-2">Mensaje</label>
+                                    <textarea id="message" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                </div>
+                                <button type="submit" class="btn-buap px-4 py-2 rounded-md">Enviar mensaje</button>
+                            </form>
+                        </div>
+                        <div class="md:flex-1 p-6 bg-gray-50">
+                            <h2 class="text-xl font-semibold text-buap-blue mb-4">Información de contacto</h2>
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-gray-700">Dirección</h3>
+                                <p class="text-gray-600">4 Sur 104, Centro Histórico, 72000 Puebla, Pue., México</p>
+                            </div>
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-gray-700">Teléfono</h3>
+                                <p class="text-gray-600">+52 (222) 229 5500</p>
+                            </div>
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-gray-700">Email</h3>
+                                <p class="text-gray-600">contacto@PabellonUniversitario.buap.mx</p>
+                            </div>
+                            <div class="mb-4">
+                                <h3 class="font-semibold text-gray-700">Horario de atención</h3>
+                                <p class="text-gray-600">Lunes a Viernes: 9:00 AM - 6:00 PM</p>
+                                <p class="text-gray-600">Sábado: 9:00 AM - 2:00 PM</p>
+                            </div>
+                            <div class="mt-6">
+                                <h3 class="font-semibold text-gray-700 mb-2">Síguenos en redes sociales</h3>
+                                <div class="flex space-x-4">
+                                    <a href="#" class="text-gray-500 hover:text-buap-blue">
+                                        <i class="fab fa-facebook-f fa-lg"></i>
+                                    </a>
+                                    <a href="#" class="text-gray-500 hover:text-buap-blue">
+                                        <i class="fab fa-twitter fa-lg"></i>
+                                    </a>
+                                    <a href="#" class="text-gray-500 hover:text-buap-blue">
+                                        <i class="fab fa-instagram fa-lg"></i>
+                                    </a>
+                                    <a href="#" class="text-gray-500 hover:text-buap-blue">
+                                        <i class="fab fa-youtube fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 border-t border-gray-200">
+                        <h2 class="text-xl font-semibold text-buap-blue mb-4">Ubicación</h2>
+                        <div class="h-80 bg-gray-200 rounded-md">
+                            <!-- Replace with actual map embed -->
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.4104818358944!2d-98.20379708469175!3d19.022654259110268!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cfc0d498a3c49f%3A0x399c43d158da579f!2sBenem%C3%A9rita%20Universidad%20Aut%C3%B3noma%20de%20Puebla!5e0!3m2!1ses-419!2smx!4v1645578100000!5m2!1ses-419!2smx" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product detail page -->
+        <div id="product-detail-page" class="hidden">
+            <div class="mb-8">
+                <a href="#" class="inline-flex items-center text-buap-blue mb-6 hover:underline" id="back-to-products">
+                    <i class="fas fa-arrow-left mr-2"></i> Volver a productos
+                </a>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="md:flex">
+                        <div class="md:flex-1 p-6">
+                            <div class="mb-4">
+                                <div class="product-image-container h-80 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden mb-4">
+                                    <img id="product-main-image" src="" alt="Product" class="max-h-full max-w-full">
+                                </div>
+                                <div class="grid grid-cols-4 gap-2">
+                                    <div class="product-thumbnail h-20 bg-gray-100 rounded-md cursor-pointer flex items-center justify-center overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" alt="Product thumbnail" class="max-h-full max-w-full">
+                                    </div>
+                                    <div class="product-thumbnail h-20 bg-gray-100 rounded-md cursor-pointer flex items-center justify-center overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" alt="Product thumbnail" class="max-h-full max-w-full">
+                                    </div>
+                                    <div class="product-thumbnail h-20 bg-gray-100 rounded-md cursor-pointer flex items-center justify-center overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1504274066651-8d31a536b11a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" alt="Product thumbnail" class="max-h-full max-w-full">
+                                    </div>
+                                    <div class="product-thumbnail h-20 bg-gray-100 rounded-md cursor-pointer flex items-center justify-center overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" alt="Product thumbnail" class="max-h-full max-w-full">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="md:flex-1 p-6 bg-gray-50">
+                            <span class="inline-block px-2 py-1 bg-buap-blue text-white text-xs rounded mb-3" id="product-category">Electrónica</span>
+                            <h1 class="text-2xl font-bold text-buap-blue mb-2" id="product-title">Cargando producto...</h1>
+                            <div class="flex items-center mb-4">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <span class="ml-2 text-sm text-gray-600">4.5 (18 reseñas)</span>
+                            </div>
+                            <div class="mb-4">
+                                <span class="text-3xl font-bold text-buap-blue" id="product-price">$0.00</span>
+                                <span class="ml-2 text-sm text-gray-500 line-through" id="product-original-price">$0.00</span>
+                            </div>
+                            <div class="mb-6">
+                                <h2 class="text-lg font-semibold text-gray-700 mb-2">Descripción</h2>
+                                <p class="text-gray-600" id="product-description">Cargando descripción...</p>
+                            </div>
+                            <div class="mb-6">
+                                <h2 class="text-lg font-semibold text-gray-700 mb-2">Vendedor</h2>
+                                <div class="flex items-center">
+                                    <img src="https://ui-avatars.com/api/?name=Facultad&background=0D8ABC&color=fff" alt="Seller" class="h-10 w-10 rounded-full">
+                                    <div class="ml-3">
+                                        <p class="text-gray-800 font-medium" id="product-seller">Cargando vendedor...</p>
+                                        <p class="text-gray-600 text-sm" id="product-faculty">Cargando facultad...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <div class="flex items-center mb-4">
+                                    <span class="text-gray-700 mr-3">Cantidad:</span>
+                                    <div class="flex items-center">
+                                        <button class="px-3 py-1 border border-gray-300 rounded-l-md bg-gray-200 hover:bg-gray-300" id="decrease-quantity">-</button>
+                                        <input type="number" min="1" value="1" class="w-12 py-1 border-t border-b border-gray-300 text-center" id="product-quantity">
+                                        <button class="px-3 py-1 border border-gray-300 rounded-r-md bg-gray-200 hover:bg-gray-300" id="increase-quantity">+</button>
+                                    </div>
+                                </div>
+                                <button class="btn-buap w-full py-3 rounded-md font-medium mb-3" id="add-to-cart-button">
+                                    <i class="fas fa-shopping-cart mr-2"></i> Agregar al carrito
+                                </button>
+                                <button class="w-full py-3 rounded-md font-medium border border-buap-blue text-buap-blue hover:bg-gray-100" id="buy-now-button">
+                                    Comprar ahora
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 border-t border-gray-200">
+                        <h2 class="text-xl font-semibold text-buap-blue mb-4">Detalles del producto</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="font-semibold text-gray-700 mb-2">Especificaciones</h3>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1" id="product-specs">
+                                    <li>Cargando especificaciones...</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-700 mb-2">Información adicional</h3>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1" id="product-additional-info">
+                                    <li>Cargando información adicional...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Related products -->
+                <div class="mt-12">
+                    <h2 class="text-2xl font-bold text-buap-blue mb-6">Productos relacionados</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="related-products">
+                        <!-- Related products will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart page -->
+        <div id="cart-page" class="hidden">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-buap-blue mb-6">Carrito de compras</h1>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                    <div class="p-6" id="cart-items-container">
+                        <div id="empty-cart" class="hidden text-center py-12">
+                            <div class="text-gray-400 mb-4">
+                                <i class="fas fa-shopping-cart fa-5x"></i>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-700 mb-2">Tu carrito está vacío</h2>
+                            <p class="text-gray-600 mb-6">¿No sabes qué comprar? ¡Miles de productos te esperan!</p>
+                            <button class="btn-buap px-6 py-2 rounded-md font-medium" id="browse-products-button">Ver productos</button>
+                        </div>
+                        <div id="cart-items-list">
+                            <!-- Cart items will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="md:flex md:space-x-6" id="cart-summary-section">
+                    <div class="md:flex-1 bg-white rounded-lg shadow-md overflow-hidden mb-6 md:mb-0">
+                        <div class="p-6">
+                            <h2 class="text-xl font-semibold text-buap-blue mb-4">Cupón de descuento</h2>
+                            <div class="flex">
+                                <input type="text" placeholder="Código de cupón" class="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <button class="btn-buap px-4 py-2 rounded-r-md font-medium">Aplicar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:flex-1 bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <h2 class="text-xl font-semibold text-buap-blue mb-4">Resumen de compra</h2>
+                            <div class="space-y-3 mb-6">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Subtotal</span>
+                                    <span class="text-gray-800 font-medium" id="cart-subtotal">$0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Descuento</span>
+                                    <span class="text-red-500 font-medium" id="cart-discount">-$0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Envío</span>
+                                    <span class="text-gray-800 font-medium" id="cart-shipping">$0.00</span>
+                                </div>
+                                <div class="border-t border-gray-200 pt-3 flex justify-between">
+                                    <span class="text-gray-800 font-semibold">Total</span>
+                                    <span class="text-buap-blue font-bold text-xl" id="cart-total">$0.00</span>
+                                </div>
+                            </div>
+                            <button class="btn-buap w-full py-3 rounded-md font-medium" id="checkout-button">
+                                Continuar al pago
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout page -->
+        <div id="checkout-page" class="hidden">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-buap-blue mb-6">Proceso de pago</h1>
+                <div class="md:flex md:space-x-6">
+                    <div class="md:flex-1">
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                            <div class="p-6">
+                                <h2 class="text-xl font-semibold text-buap-blue mb-4">Información de contacto</h2>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="checkout-name" class="block text-gray-700 mb-2">Nombre completo</label>
+                                        <input type="text" id="checkout-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="checkout-email" class="block text-gray-700 mb-2">Correo electrónico</label>
+                                        <input type="email" id="checkout-email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="checkout-phone" class="block text-gray-700 mb-2">Teléfono</label>
+                                        <input type="tel" id="checkout-phone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                            <div class="p-6">
+                                <h2 class="text-xl font-semibold text-buap-blue mb-4">Dirección de entrega</h2>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="checkout-address" class="block text-gray-700 mb-2">Dirección</label>
+                                        <input type="text" id="checkout-address" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="checkout-city" class="block text-gray-700 mb-2">Ciudad</label>
+                                            <input type="text" id="checkout-city" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                        <div>
+                                            <label for="checkout-zip" class="block text-gray-700 mb-2">Código postal</label>
+                                            <input type="text" id="checkout-zip" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="checkout-state" class="block text-gray-700 mb-2">Estado</label>
+                                            <input type="text" id="checkout-state" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                        <div>
+                                            <label for="checkout-country" class="block text-gray-700 mb-2">País</label>
+                                            <select id="checkout-country" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <option value="MX">México</option>
+                                                <option value="US">Estados Unidos</option>
+                                                <option value="CA">Canadá</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                            <div class="p-6">
+                                <h2 class="text-xl font-semibold text-buap-blue mb-4">Método de pago</h2>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="payment-method" value="card" class="mr-2" checked>
+                                            <span class="text-gray-700">Tarjeta de crédito/débito</span>
+                                        </label>
+                                        <div class="mt-3 ml-6">
+                                            <div class="mb-3">
+                                                <label for="card-number" class="block text-gray-700 mb-1 text-sm">Número de tarjeta</label>
+                                                <input type="text" id="card-number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label for="card-expiry" class="block text-gray-700 mb-1 text-sm">Fecha de expiración</label>
+                                                    <input type="text" id="card-expiry" placeholder="MM/AA" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                </div>
+                                                <div>
+                                                    <label for="card-cvc" class="block text-gray-700 mb-1 text-sm">CVC</label>
+                                                    <input type="text" id="card-cvc" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="payment-method" value="paypal" class="mr-2">
+                                            <span class="text-gray-700">PayPal</span>
+                                            <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal" class="h-5 ml-2">
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="payment-method" value="transfer" class="mr-2">
+                                            <span class="text-gray-700">Transferencia bancaria</span>
+                                        </label>
+                                        <div class="mt-3 ml-6 hidden" id="transfer-details">
+                                            <div class="p-3 bg-gray-100 rounded-md text-sm">
+                                                <p class="font-medium text-gray-700 mb-1">Detalles de la cuenta:</p>
+                                                <p class="text-gray-600">Banco: BBVA</p>
+                                                <p class="text-gray-600">Titular: Universidad Autónoma de Puebla</p>
+                                                <p class="text-gray-600">CLABE: 012650004988562933</p>
+                                                <p class="text-gray-600">Cuenta: 0498856293</p>
+                                                <p class="mt-2 text-gray-600 italic">Importante: Una vez realizada la transferencia, deberás enviar el comprobante a pagos@PabellonUniversitario.buap.mx</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="payment-method" value="cash" class="mr-2">
+                                            <span class="text-gray-700">Pago en efectivo</span>
+                                        </label>
+                                        <div class="mt-3 ml-6 hidden" id="cash-details">
+                                            <div class="p-3 bg-gray-100 rounded-md text-sm">
+                                                <p class="text-gray-600">Podrás realizar el pago en efectivo en la tesorería de tu facultad o en la tesorería general de la BUAP.</p>
+                                                <p class="mt-2 text-gray-600 italic">Nota: Tu pedido se preparará una vez confirmado el pago.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:flex-1 md:max-w-md">
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                            <div class="p-6">
+                                <h2 class="text-xl font-semibold text-buap-blue mb-4">Resumen de pedido</h2>
+                                <div class="space-y-3 mb-6" id="checkout-items">
+                                    <!-- Checkout items will be loaded here -->
+                                </div>
+                                <div class="border-t border-gray-200 pt-3 space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Subtotal</span>
+                                        <span class="text-gray-800 font-medium" id="checkout-subtotal">$0.00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Descuento</span>
+                                        <span class="text-red-500 font-medium" id="checkout-discount">-$0.00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Envío</span>
+                                        <span class="text-gray-800 font-medium" id="checkout-shipping">$0.00</span>
+                                    </div>
+                                    <div class="border-t border-gray-200 pt-3 flex justify-between">
+                                        <span class="text-gray-800 font-semibold">Total</span>
+                                        <span class="text-buap-blue font-bold text-xl" id="checkout-total">$0.00</span>
+                                    </div>
+                                </div>
+                                <button class="btn-buap w-full py-3 rounded-md font-medium mt-6" id="place-order-button">
+                                    Confirmar pedido
+                                </button>
+                                <p class="text-sm text-gray-500 mt-3 text-center">
+                                    Al completar este pedido, aceptas nuestros <a href="#" class="text-buap-blue hover:underline">términos y condiciones</a> y <a href="#" class="text-buap-blue hover:underline">política de privacidad</a>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order confirmation page -->
+        <div id="confirmation-page" class="hidden">
+            <div class="mb-8">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                    <div class="p-8 text-center">
+                        <div class="text-green-500 mb-4">
+                            <i class="fas fa-check-circle fa-5x"></i>
+                        </div>
+                        <h1 class="text-2xl font-bold text-buap-blue mb-2">¡Pedido confirmado!</h1>
+                        <p class="text-gray-600 mb-6">Tu pedido ha sido procesado correctamente.</p>
+                        <div class="max-w-md mx-auto mb-6 p-4 bg-gray-50 rounded-md text-left">
+                            <p class="text-gray-700 mb-2"><strong>Número de pedido:</strong> <span id="order-number">ORD-2023-1234</span></p>
+                            <p class="text-gray-700 mb-2"><strong>Fecha:</strong> <span id="order-date">25/09/2023</span></p>
+                            <p class="text-gray-700 mb-2"><strong>Método de pago:</strong> <span id="order-payment-method">Tarjeta de crédito</span></p>
+                            <p class="text-gray-700"><strong>Total:</strong> <span id="order-total" class="text-buap-blue font-semibold">$0.00</span></p>
+                        </div>
+                        <p class="text-gray-600 mb-6">Hemos enviado un correo electrónico con los detalles de tu pedido a <span id="order-email" class="font-medium">correo@example.com</span></p>
+                        <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+                            <button class="btn-buap px-6 py-2 rounded-md font-medium" id="my-orders-button">
+                                Ver mis pedidos
+                            </button>
+                            <button class="px-6 py-2 rounded-md font-medium border border-buap-blue text-buap-blue hover:bg-gray-100" id="continue-shopping-button">
+                                Seguir comprando
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order details -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <h2 class="text-xl font-semibold text-buap-blue mb-4">Detalles del pedido</h2>
+                        <div class="mb-6" id="confirmation-items">
+                            <!-- Order items will be loaded here -->
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <h3 class="font-semibold text-gray-700 mb-2">Dirección de entrega</h3>
+                                <p class="text-gray-600" id="delivery-address">
+                                    Nombre del cliente<br>
+                                    Dirección completa<br>
+                                    Ciudad, Estado, Código Postal<br>
+                                    País
+                                </p>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-700 mb-2">Información de contacto</h3>
+                                <p class="text-gray-600" id="contact-info">
+                                    Correo: correo@example.com<br>
+                                    Teléfono: +52 123 456 7890
+                                </p>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-200 pt-4">
+                            <div class="text-right space-y-1">
+                                <div class="flex justify-end">
+                                    <span class="text-gray-600 mr-8">Subtotal:</span>
+                                    <span class="text-gray-800 font-medium w-24" id="confirmation-subtotal">$0.00</span>
+                                </div>
+                                <div class="flex justify-end">
+                                    <span class="text-gray-600 mr-8">Descuento:</span>
+                                    <span class="text-red-500 font-medium w-24" id="confirmation-discount">-$0.00</span>
+                                </div>
+                                <div class="flex justify-end">
+                                    <span class="text-gray-600 mr-8">Envío:</span>
+                                    <span class="text-gray-800 font-medium w-24" id="confirmation-shipping">$0.00</span>
+                                </div>
+                                <div class="flex justify-end text-lg font-bold">
+                                    <span class="text-gray-800 mr-8">Total:</span>
+                                    <span class="text-buap-blue w-24" id="confirmation-total">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Modal -->
+        <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+                <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700" id="close-login-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-buap-blue">Iniciar sesión</h2>
+                    <p class="text-gray-600">Ingresa a tu cuenta de Pabellon Universitario</p>
+                </div>
+                <form class="space-y-4">
+                    <div>
+                        <label for="login-email" class="block text-gray-700 mb-2">Correo institucional</label>
+                        <input type="email" id="login-email" placeholder="ejemplo@alumno.buap.mx" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="login-password" class="block text-gray-700 mb-2">Contraseña</label>
+                        <input type="password" id="login-password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2">
+                            <span class="text-gray-700 text-sm">Recordarme</span>
+                        </label>
+                        <a href="#" class="text-buap-blue text-sm hover:underline">¿Olvidaste tu contraseña?</a>
+                    </div>
+                    <button type="button" class="btn-buap w-full py-2 rounded-md font-medium" id="login-submit">Iniciar sesión</button>
+                </form>
+                <div class="text-center mt-6">
+                    <p class="text-gray-600">¿No tienes cuenta? <a href="#" class="text-buap-blue hover:underline" id="show-register-modal">Regístrate aquí</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Modal -->
+        <div id="register-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+                <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700" id="close-register-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-buap-blue">Crear cuenta</h2>
+                    <p class="text-gray-600">Regístrate en Pabellon Universitario</p>
+                </div>
+                <form class="space-y-4">
+                    <div>
+                        <label for="register-name" class="block text-gray-700 mb-2">Nombre completo</label>
+                        <input type="text" id="register-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="register-student-id" class="block text-gray-700 mb-2">Matrícula</label>
+                        <input type="text" id="register-student-id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="register-email" class="block text-gray-700 mb-2">Correo institucional</label>
+                        <input type="email" id="register-email" placeholder="ejemplo@alumno.buap.mx" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="register-faculty" class="block text-gray-700 mb-2">Facultad</label>
+                        <select id="register-faculty" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Seleccionar facultad</option>
+                            <option value="administracion">Facultad de Administracion</option>
+                            <option value="arquitectura">Facultad de Arquitectura</option>
+                            <option value="artes">Facultad de Artes</option>
+                            <option value="artes plasticas">Facultad de Artes Plasticas y Audiovisuales</option>
+                            <option value="agricolas">Facultad de Ciencias Agricolas y Pecuarias</option>
+                            <option value="biologia">Facultad de Ciencias Biologicas</option>
+                            <option value="computacion">Facultad de Ciencias de la Computacion</option>
+                            <option value="comunicacion">Facultad de Ciencias de la Comunicacion</option>
+                            <option value="electronica">Facultad de Ciencias de la Electronica</option>
+                            <option value="ciencias quimicas">Facultad de Ciencias Quimicas</option>
+                            <option value="contaduria">Facultad de Contaduria Publica</option>
+                            <option value="cultura fisica">Facultad de Cultura Fisica</option>
+                            <option value="derecho">Facultad de Derecho y Ciencias Politicas</option>
+                            <option value="economia">Facultad de Economia</option>
+                            <option value="enfermeria">Facultad de Enfermeria</option>
+                            <option value="estomatologia">Facultad de Estomotalogia</option>
+                            <option value="filosofia">Facultad de Filosofia y Letras</option>
+                            <option value="fisico matematico">Facultad de Fisico Matematicas</option>
+                            <option value="ingenieria">Facultad de Ingenieria</option>
+                            <option value="ingenieria quimica">Facultad de Ingenieria Quimica</option>
+                            <option value="lenguas">Facultad de Lenguas</option>
+                            <option value="medicina">Facultad de Medicina</option>
+                            <option value="veterinaria">Facultad de Medicina Veterinaria y Zootecnia</option>
+                            <option value="psicología">Facultad de Psicologia</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="register-password" class="block text-gray-700 mb-2">Contraseña</label>
+                        <input type="password" id="register-password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="register-confirm-password" class="block text-gray-700 mb-2">Confirmar contraseña</label>
+                        <input type="password" id="register-confirm-password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="register-terms" class="mr-2">
+                        <label for="register-terms" class="text-gray-700 text-sm">
+                            Acepto los <a href="#" class="text-buap-blue hover:underline">términos y condiciones</a> y la <a href="#" class="text-buap-blue hover:underline">política de privacidad</a>
+                        </label>
+                    </div>
+                    <button type="button" class="btn-buap w-full py-2 rounded-md font-medium" id="register-submit">Registrarse</button>
+                </form>
+                <div class="text-center mt-6">
+                    <p class="text-gray-600">¿Ya tienes cuenta? <a href="#" class="text-buap-blue hover:underline" id="show-login-modal">Inicia sesión</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add to cart modal -->
+        <div id="add-to-cart-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+                <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700" id="close-cart-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="text-center mb-4">
+                    <div class="text-green-500 mb-3">
+                        <i class="fas fa-check-circle fa-3x"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-buap-blue">Producto agregado al carrito</h2>
+                </div>
+                <div class="flex items-center p-4 bg-gray-50 rounded-md mb-4">
+                    <img src="" alt="Product" class="w-16 h-16 object-cover rounded" id="cart-modal-image">
+                    <div class="ml-4">
+                        <h3 class="font-medium text-gray-800" id="cart-modal-title">Nombre del producto</h3>
+                        <p class="text-buap-blue font-medium mt-1" id="cart-modal-price">$0.00</p>
+                    </div>
+                </div>
+                <div class="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3">
+                    <button class="btn-buap flex-1 py-2 rounded-md font-medium" id="go-to-cart">
+                        Ir al carrito
+                    </button>
+                    <button class="flex-1 py-2 rounded-md font-medium border border-buap-blue text-buap-blue hover:bg-gray-100" id="continue-shopping">
+                        Seguir comprando
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Acerca de</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white">Sobre Pabellon Universitario</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Términos y condiciones</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Política de privacidad</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Política de envíos</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Servicios</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white">Vende tus productos</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Programa de afiliados</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Envíos y entregas</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Métodos de pago</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Ayuda</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white">Centro de ayuda</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Preguntas frecuentes</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Contacto</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Devoluciones</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contacto</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-300">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            4 Sur 104, Centro Histórico, 72000 Puebla, Pue.
+                        </li>
+                        <li class="flex items-center text-gray-300">
+                            <i class="fas fa-phone mr-2"></i>
+                            +52 (222) 229 5500
+                        </li>
+                        <li class="flex items-center text-gray-300">
+                            <i class="fas fa-envelope mr-2"></i>
+                            contacto@PabellonUniversitario.buap.mx
+                        </li>
+                    </ul>
+                    <div class="mt-4">
+                        <h4 class="text-sm font-semibold mb-2">Síguenos</h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-gray-300 hover:text-white">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="text-gray-300 hover:text-white">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="text-gray-300 hover:text-white">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="text-gray-300 hover:text-white">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <img class="h-8 w-auto" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeKIvcqh4eoDSQtNDe2qOZ9pTvGQ_I9ICz0g&s" alt="BUAP Logo">
+                    <span class="ml-2 text-gray-300">Pabellon Universitario - BUAP</span>
+                </div>
+                <p class="text-gray-400 text-sm">© 2025 Benemérita Universidad Autónoma de Puebla. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        const mockProducts = [
+            {
+                id: 1,
+                title: "Audífonos Bluetooth BUAP Edition",
+                price: 499.99,
+                originalPrice: 599.99,
+                description: "Audífonos inalámbricos con cancelación de ruido y logo de la BUAP. Batería de larga duración y excelente calidad de sonido.",
+                category: "Electrónica",
+                faculty: "Facultad de Ingeniería",
+                seller: "TechBUAP",
+                images: [
+                    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+                ],
+                specs: [
+                    "Bluetooth 5.0",
+                    "Cancelación de ruido activa",
+                    "30 horas de batería",
+                    "Resistentes al agua",
+                    "Controladores de 40mm"
+                ],
+                additionalInfo: [
+                    "1 año de garantía",
+                    "Incluye estuche de transporte",
+                    "Logo de la BUAP grabado",
+                    "Disponible en varios colores"
+                ],
+                rating: 4.5,
+                reviews: 18,
+                featured: true
+            },
+            {
+                id: 2,
+                title: "Sudadera BUAP",
+                price: 349.99,
+                originalPrice: 399.99,
+                description: "Sudadera oficial de la BUAP, con capucha y bolsillo frontal. Material de alta calidad y diseño exclusivo.",
+                category: "Ropa y accesorios",
+                faculty: "Facultad de Artes",
+                seller: "BUAP Fashion",
+                images: [
+                    "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+                ],
+                specs: [
+                    "80% algodón, 20% poliéster",
+                    "Lavable a máquina",
+                    "Tallas: S, M, L, XL, XXL",
+                    "Con capucha ajustable"
+                ],
+                additionalInfo: [
+                    "Diseñada por estudiantes de Artes",
+                    "Disponible en varios colores",
+                    "Envío gratuito dentro del campus"
+                ],
+                rating: 4.8,
+                reviews: 24,
+                featured: true
+            },
+            {
+                id: 3,
+                title: "Kit de Laboratorio Química Básica",
+                price: 799.99,
+                originalPrice: 899.99,
+                description: "Kit completo de laboratorio para prácticas de química básica. Incluye instrumentos de vidrio, mechero y guía de prácticas.",
+                category: "Libros y material académico",
+                faculty: "Facultad de Ciencias Químicas",
+                seller: "ChemLab BUAP",
+                images: [
+                    "https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+                ],
+                specs: [
+                    "Tubos de ensayo (10 piezas)",
+                    "Vasos de precipitado (3 piezas)",
+                    "Mechero de alcohol",
+                    "Pinzas y soporte",
+                    "Guía de prácticas"
+                ],
+                additionalInfo: [
+                    "Aprobado por la Facultad de Ciencias Químicas",
+                    "Para prácticas educativas solamente",
+                    "Incluye instructivo de seguridad"
+                ],
+                rating: 4.3,
+                reviews: 12,
+                featured: true
+            },
+            {
+                id: 4,
+                title: "Cerámica Talavera BUAP",
+                price: 249.99,
+                originalPrice: 299.99,
+                description: "Hermosa pieza de cerámica Talavera con motivos de la BUAP. Hecha a mano por estudiantes de la Facultad de Artes.",
+                category: "Artesanías y souvenirs",
+                faculty: "Facultad de Artes",
+                seller: "ArtesBUAP",
+                images: [
+                    "https://images.unsplash.com/photo-1493106641515-6b5631de4bb9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+                ],
+                specs: [
+                    "Hecha a mano",
+                    "Cerámica Talavera auténtica",
+                    "Dimensiones: 15 x 15 cm",
+                    "Pintada y barnizada a mano"
+                ],
+                additionalInfo: [
+                    "Pieza única",
+                    "Certificado de autenticidad",
+                    "Parte de las ganancias apoya a estudiantes"
+                ],
+                rating: 4.9,
+                reviews: 31,
+                featured: true
+            },
+            {
+                id: 5,
+                title: "Power Bank BUAP 10000mAh",
+                price: 299.99,
+                originalPrice: 349.99,
+                description: "Batería externa de 10000mAh con el logo de la BUAP. Carga rápida y múltiples puertos de conexión.",
+                category: "Electrónica",
+                faculty: "Facultad de Ingeniería",
+                seller: "TechBUAP",
+                images: [
+                    "https://images.unsplash.com/photo-1583863619548-fcd3ea6d99fb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+                ],
+                specs: [
+                    "Capacidad: 10000mAh",
+                    "Puertos: USB-A y USB-C",
+                    "Carga rápida 18W",
+                    "Indicador LED de batería"
+                ],
+                additionalInfo: [
+                    "Diseñado por estudiantes de Ingeniería",
+                    "Incluye cable USB-C",
+                    "Garantía de 6 meses"
+                ],
+                rating: 4.2,
+                reviews: 15,
+                featured: false
+            },
+            {
+                id: 6,
+                title: "Planificador Académico BUAP",
+                price: 129.99,
+                originalPrice: 149.99,
+                description: "Agenda y planificador diseñado especialmente para estudiantes de la BUAP. Incluye secciones para horarios, tareas y calendario académico.",
+                category: "Libros y material académico",
+                faculty: "Facultad de Administración",
+                seller: "AdminBUAP",
+                images: [
+                    "https://images.unsplash.com/photo-1517842645767-c639042777db?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+                ],
+                specs: [
+                    "200 páginas",
+                    "Tapa dura",
+                    "Encuadernación de alta calidad",
+                    "Papel de 80g",
+                    "Tamaño A5"
+                ],
+                additionalInfo: [
+                    "Incluye calendario académico BUAP",
+                    "Diseñado por estudiantes",
+                    "Disponible en varios colores"
+                ],
+                rating: 4.7,
+                reviews: 28,
+                featured: false
+            },
+            {
+                id: 7,
+                title: "Taza BUAP Edición Especial",
+                price: 89.99,
+                originalPrice: 119.99,
+                description: "Taza de cerámica con diseño exclusivo de la BUAP. Perfecta para café o té, resistente al microondas y lavavajillas.",
+                category: "Artesanías y souvenirs",
+                faculty: "Facultad de Artes",
+                seller: "ArtesBUAP",
+                images: [
+                    "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+                ],
+                specs: [
+                    "Capacidad: 350ml",
+                    "Material: Cerámica",
+                    "Apta para microondas y lavavajillas",
+                    "Diseño en 360°"
+                ],
+                additionalInfo: [
+                    "Edición limitada",
+                    "Diseño exclusivo",
+                    "Embalaje regalo disponible"
+                ],
+                rating: 4.6,
+                reviews: 20,
+                featured: false
+            },
+            {
+                id: 8,
+                title: "Gorra BUAP Deportes",
+                price: 149.99,
+                originalPrice: 179.99,
+                description: "Gorra deportiva con el logo de los equipos deportivos de la BUAP. Material transpirable y ajuste cómodo.",
+                category: "Ropa y accesorios",
+                faculty: "Facultad de Cultura Física",
+                seller: "SportsBUAP",
+                images: [
+                    "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+                ],
+                specs: [
+                    "Material: 80% algodón, 20% poliéster",
+                    "Talla única ajustable",
+                    "Visera curva",
+                    "Bordado de alta calidad"
+                ],
+                additionalInfo: [
+                    "Oficial de los equipos deportivos BUAP",
+                    "Disponible en varios colores",
+                    "Diseño exclusivo"
+                ],
+                rating: 4.4,
+                reviews: 17,
+                featured: false
+            }
+        ];
+
+        // Generate related products based on product ID
+        function getRelatedProducts(productId) {
+            return mockProducts.filter(p => p.id !== productId).slice(0, 4);
+        }
+
+        // Helper function to format prices
+        function formatPrice(price) {
+            return '$' + price.toFixed(2);
+        }
+
+        // Function to render featured products
+        function renderFeaturedProducts() {
+            const featuredProductsContainer = document.getElementById('featured-products');
+            const featuredProducts = mockProducts.filter(product => product.featured);
+            
+            featuredProducts.forEach(product => {
+                const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+                const productElement = document.createElement('div');
+                productElement.className = 'bg-white rounded-lg shadow-md overflow-hidden product-card';
+                productElement.innerHTML = `
+                    <div class="relative">
+                        <img src="${product.images[0]}" alt="${product.title}" class="w-full h-48 object-cover">
+                        ${discount > 0 ? `<span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">-${discount}%</span>` : ''}
+                    </div>
+                    <div class="p-4">
+                        <span class="text-xs text-gray-500">${product.category}</span>
+                        <h3 class="text-lg font-semibold text-buap-blue mt-1">${product.title}</h3>
+                        <p class="text-gray-600 text-sm mt-1">${product.faculty}</p>
+                        <div class="flex items-center mt-2">
+                            <div class="flex text-yellow-400 text-xs">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="ml-1 text-xs text-gray-500">(${product.reviews})</span>
+                        </div>
+                        <div class="mt-3 flex justify-between items-center">
+                            <div>
+                                <span class="text-buap-blue font-bold">${formatPrice(product.price)}</span>
+                                ${product.originalPrice ? `<span class="text-gray-500 text-sm line-through ml-1">${formatPrice(product.originalPrice)}</span>` : ''}
+                            </div>
+                            <button class="text-buap-blue hover:text-blue-700 view-product" data-product-id="${product.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                featuredProductsContainer.appendChild(productElement);
+            });
+        }
+
+        // Function to render products grid
+        function renderProductsGrid() {
+            const productsGrid = document.getElementById('products-grid');
+            productsGrid.innerHTML = '';
+            
+            mockProducts.forEach(product => {
+                const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+                const productElement = document.createElement('div');
+                productElement.className = 'bg-white rounded-lg shadow-md overflow-hidden product-card';
+                productElement.innerHTML = `
+                    <div class="relative">
+                        <img src="${product.images[0]}" alt="${product.title}" class="w-full h-48 object-cover">
+                        ${discount > 0 ? `<span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">-${discount}%</span>` : ''}
+                    </div>
+                    <div class="p-4">
+                        <span class="text-xs text-gray-500">${product.category}</span>
+                        <h3 class="text-lg font-semibold text-buap-blue mt-1">${product.title}</h3>
+                        <p class="text-gray-600 text-sm mt-1">${product.faculty}</p>
+                        <div class="flex items-center mt-2">
+                            <div class="flex text-yellow-400 text-xs">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="ml-1 text-xs text-gray-500">(${product.reviews})</span>
+                        </div>
+                        <div class="mt-3 flex justify-between items-center">
+                            <div>
+                                <span class="text-buap-blue font-bold">${formatPrice(product.price)}</span>
+                                ${product.originalPrice ? `<span class="text-gray-500 text-sm line-through ml-1">${formatPrice(product.originalPrice)}</span>` : ''}
+                            </div>
+                            <button class="text-buap-blue hover:text-blue-700 view-product" data-product-id="${product.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                productsGrid.appendChild(productElement);
+            });
+        }
+
+        // Function to render product detail
+        function renderProductDetail(productId) {
+            const product = mockProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            document.getElementById('product-category').textContent = product.category;
+            document.getElementById('product-title').textContent = product.title;
+            document.getElementById('product-price').textContent = formatPrice(product.price);
+            document.getElementById('product-original-price').textContent = product.originalPrice ? formatPrice(product.originalPrice) : '';
+            document.getElementById('product-original-price').style.display = product.originalPrice ? 'inline' : 'none';
+            document.getElementById('product-description').textContent = product.description;
+            document.getElementById('product-seller').textContent = product.seller;
+            document.getElementById('product-faculty').textContent = product.faculty;
+            document.getElementById('product-main-image').src = product.images[0];
+            
+            // Clear and add specs
+            const specsContainer = document.getElementById('product-specs');
+            specsContainer.innerHTML = '';
+            product.specs.forEach(spec => {
+                const li = document.createElement('li');
+                li.textContent = spec;
+                specsContainer.appendChild(li);
+            });
+            
+            // Clear and add additional info
+            const additionalInfoContainer = document.getElementById('product-additional-info');
+            additionalInfoContainer.innerHTML = '';
+            product.additionalInfo.forEach(info => {
+                const li = document.createElement('li');
+                li.textContent = info;
+                additionalInfoContainer.appendChild(li);
+            });
+            
+            // Render related products
+            const relatedProductsContainer = document.getElementById('related-products');
+            relatedProductsContainer.innerHTML = '';
+            
+            const relatedProducts = getRelatedProducts(productId);
+            relatedProducts.forEach(related => {
+                const discount = related.originalPrice ? Math.round(((related.originalPrice - related.price) / related.originalPrice) * 100) : 0;
+                const relatedElement = document.createElement('div');
+                relatedElement.className = 'bg-white rounded-lg shadow-md overflow-hidden product-card';
+                relatedElement.innerHTML = `
+                    <div class="relative">
+                        <img src="${related.images[0]}" alt="${related.title}" class="w-full h-48 object-cover">
+                        ${discount > 0 ? `<span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">-${discount}%</span>` : ''}
+                    </div>
+                    <div class="p-4">
+                        <span class="text-xs text-gray-500">${related.category}</span>
+                        <h3 class="text-lg font-semibold text-buap-blue mt-1">${related.title}</h3>
+                        <p class="text-gray-600 text-sm mt-1">${related.faculty}</p>
+                        <div class="flex items-center mt-2">
+                            <div class="flex text-yellow-400 text-xs">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="ml-1 text-xs text-gray-500">(${related.reviews})</span>
+                        </div>
+                        <div class="mt-3 flex justify-between items-center">
+                            <div>
+                                <span class="text-buap-blue font-bold">${formatPrice(related.price)}</span>
+                                ${related.originalPrice ? `<span class="text-gray-500 text-sm line-through ml-1">${formatPrice(related.originalPrice)}</span>` : ''}
+                            </div>
+                            <button class="text-buap-blue hover:text-blue-700 view-product" data-product-id="${related.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                relatedProductsContainer.appendChild(relatedElement);
+            });
+        }
+
+        // Shopping cart functionality
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // Function to update cart icon count
+        function updateCartCount() {
+            const cartCount = document.getElementById('cart-count');
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = count;
+        }
+
+        // Function to add product to cart
+        function addToCart(productId, quantity) {
+            const product = mockProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            // Check if product already in cart
+            const existingItemIndex = cart.findIndex(item => item.productId === productId);
+            
+            if (existingItemIndex >= 0) {
+                cart[existingItemIndex].quantity += quantity;
+            } else {
+                cart.push({
+                    productId,
+                    title: product.title,
+                    price: product.price,
+                    image: product.images[0],
+                    quantity
+                });
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Update cart count
+            updateCartCount();
+            
+            // Show add to cart modal
+            document.getElementById('cart-modal-image').src = product.images[0];
+            document.getElementById('cart-modal-title').textContent = product.title;
+            document.getElementById('cart-modal-price').textContent = formatPrice(product.price);
+            document.getElementById('add-to-cart-modal').classList.remove('hidden');
+        }
+
+        // Function to render cart items
+        function renderCartItems() {
+            const cartItemsList = document.getElementById('cart-items-list');
+            const emptyCart = document.getElementById('empty-cart');
+            const cartSummarySection = document.getElementById('cart-summary-section');
+            
+            if (cart.length === 0) {
+                cartItemsList.classList.add('hidden');
+                emptyCart.classList.remove('hidden');
+                cartSummarySection.classList.add('hidden');
+                return;
+            }
+            
+            cartItemsList.classList.remove('hidden');
+            emptyCart.classList.add('hidden');
+            cartSummarySection.classList.remove('hidden');
+            
+            cartItemsList.innerHTML = '';
+            
+            cart.forEach((item, index) => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'flex items-center py-4 border-b border-gray-200';
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}" class="w-16 h-16 object-cover rounded">
+                    <div class="ml-4 flex-1">
+                        <h3 class="font-medium text-gray-800">${item.title}</h3>
+                        <p class="text-buap-blue font-medium mt-1">${formatPrice(item.price)}</p>
+                    </div>
+                    <div class="flex items-center mx-4">
+                        <button class="px-2 py-1 border border-gray-300 rounded-l-md bg-gray-200 hover:bg-gray-300 cart-decrease" data-index="${index}">-</button>
+                        <span class="w-8 py-1 border-t border-b border-gray-300 text-center">${item.quantity}</span>
+                        <button class="px-2 py-1 border border-gray-300 rounded-r-md bg-gray-200 hover:bg-gray-300 cart-increase" data-index="${index}">+</button>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-medium text-gray-800">${formatPrice(item.price * item.quantity)}</p>
+                        <button class="text-gray-500 hover:text-red-500 mt-1 cart-remove" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                cartItemsList.appendChild(cartItem);
+            });
+            
+            // Update cart totals
+            updateCartTotals();
+        }
+
+        // Function to update cart totals
+        function updateCartTotals() {
+            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            const discount = 0; // In a real app, this would be calculated based on applied discounts
+            const shipping = subtotal > 0 ? 50 : 0; // Example: shipping is free above a certain amount
+            const total = subtotal - discount + shipping;
+            
+            document.getElementById('cart-subtotal').textContent = formatPrice(subtotal);
+            document.getElementById('cart-discount').textContent = formatPrice(-discount);
+            document.getElementById('cart-shipping').textContent = formatPrice(shipping);
+            document.getElementById('cart-total').textContent = formatPrice(total);
+        }
+
+        // Function to render checkout items
+        function renderCheckoutItems() {
+            const checkoutItems = document.getElementById('checkout-items');
+            checkoutItems.innerHTML = '';
+            
+            cart.forEach(item => {
+                const checkoutItem = document.createElement('div');
+                checkoutItem.className = 'flex items-center mb-3 pb-3 border-b border-gray-200';
+                checkoutItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}" class="w-12 h-12 object-cover rounded">
+                    <div class="ml-3 flex-1">
+                        <h3 class="text-sm font-medium text-gray-800">${item.title}</h3>
+                        <div class="flex justify-between mt-1">
+                            <p class="text-xs text-gray-600">Cantidad: ${item.quantity}</p>
+                            <p class="text-buap-blue font-medium">${formatPrice(item.price * item.quantity)}</p>
+                        </div>
+                    </div>
+                `;
+                checkoutItems.appendChild(checkoutItem);
+            });
+            
+            // Update checkout totals
+            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            const discount = 0;
+            const shipping = subtotal > 0 ? 50 : 0;
+            const total = subtotal - discount + shipping;
+            
+            document.getElementById('checkout-subtotal').textContent = formatPrice(subtotal);
+            document.getElementById('checkout-discount').textContent = formatPrice(-discount);
+            document.getElementById('checkout-shipping').textContent = formatPrice(shipping);
+            document.getElementById('checkout-total').textContent = formatPrice(total);
+        }
+
+        // Function to render confirmation page
+        function renderConfirmationPage() {
+            const orderNumber = 'ORD-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+            const orderDate = new Date().toLocaleDateString();
+            
+            // Set order details
+            document.getElementById('order-number').textContent = orderNumber;
+            document.getElementById('order-date').textContent = orderDate;
+            document.getElementById('order-payment-method').textContent = getSelectedPaymentMethod();
+            
+            // Get email from form
+            const email = document.getElementById('checkout-email').value || 'correo@example.com';
+            document.getElementById('order-email').textContent = email;
+            
+            // Get address from form
+            const name = document.getElementById('checkout-name').value || 'Nombre del cliente';
+            const address = document.getElementById('checkout-address').value || 'Dirección';
+            const city = document.getElementById('checkout-city').value || 'Ciudad';
+            const state = document.getElementById('checkout-state').value || 'Estado';
+            const zip = document.getElementById('checkout-zip').value || 'Código Postal';
+            const country = document.getElementById('checkout-country').options[document.getElementById('checkout-country').selectedIndex].text || 'País';
+            
+            document.getElementById('delivery-address').innerHTML = `
+                ${name}<br>
+                ${address}<br>
+                ${city}, ${state}, ${zip}<br>
+                ${country}
+            `;
+            
+            const phone = document.getElementById('checkout-phone').value || '+52 123 456 7890';
+            
+            document.getElementById('contact-info').innerHTML = `
+                Correo: ${email}<br>
+                Teléfono: ${phone}
+            `;
+            
+            // Render confirmation items
+            const confirmationItems = document.getElementById('confirmation-items');
+            confirmationItems.innerHTML = '';
+            
+            cart.forEach(item => {
+                const confirmationItem = document.createElement('div');
+                confirmationItem.className = 'flex items-center mb-3 pb-3 border-b border-gray-200';
+                confirmationItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}" class="w-16 h-16 object-cover rounded">
+                    <div class="ml-4 flex-1">
+                        <h3 class="font-medium text-gray-800">${item.title}</h3>
+                        <p class="text-gray-600 text-sm mt-1">Cantidad: ${item.quantity}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-medium text-gray-800">${formatPrice(item.price * item.quantity)}</p>
+                    </div>
+                `;
+                confirmationItems.appendChild(confirmationItem);
+            });
+            
+            // Update totals
+            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            const discount = 0;
+            const shipping = subtotal > 0 ? 50 : 0;
+            const total = subtotal - discount + shipping;
+            
+            document.getElementById('confirmation-subtotal').textContent = formatPrice(subtotal);
+            document.getElementById('confirmation-discount').textContent = formatPrice(-discount);
+            document.getElementById('confirmation-shipping').textContent = formatPrice(shipping);
+            document.getElementById('confirmation-total').textContent = formatPrice(total);
+            document.getElementById('order-total').textContent = formatPrice(total);
+            
+            // Clear cart
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        // Helper function to get selected payment method
+        function getSelectedPaymentMethod() {
+            const paymentMethods = document.getElementsByName('payment-method');
+            for (let i = 0; i < paymentMethods.length; i++) {
+                if (paymentMethods[i].checked) {
+                    switch (paymentMethods[i].value) {
+                        case 'card':
+                            return 'Tarjeta de crédito/débito';
+                        case 'paypal':
+                            return 'PayPal';
+                        case 'transfer':
+                            return 'Transferencia bancaria';
+                        case 'cash':
+                            return 'Pago en efectivo';
+                    }
+                }
+            }
+            return 'Tarjeta de crédito/débito';
+        }
+
+        // Initialize the application
+        function initApp() {
+            // Hide loading overlay
+            setTimeout(() => {
+                document.getElementById('loading-overlay').classList.add('hidden');
+            }, 1000);
+            
+            // Render featured products
+            renderFeaturedProducts();
+            
+            // Render products grid
+            renderProductsGrid();
+            
+            // Update cart count
+            updateCartCount();
+            
+            // Add event listeners
+            addEventListeners();
+        }
+
+        // Add event listeners
+        function addEventListeners() {
+            // Navigation links
+            document.getElementById('nav-home').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('home-page');
+            });
+            
+            document.getElementById('nav-products').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('products-page');
+            });
+            
+            document.getElementById('nav-faculties').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('faculties-page');
+            });
+            
+            document.getElementById('nav-contact').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('contact-page');
+            });
+            
+            // User menu
+            document.getElementById('user-menu-button').addEventListener('click', function() {
+                document.getElementById('user-dropdown').classList.toggle('hidden');
+            });
+            
+            // Mobile menu
+            document.getElementById('mobile-menu-button').addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.toggle('hidden');
+            });
+            
+            // Login / Register buttons
+            document.getElementById('login-button').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('user-dropdown').classList.add('hidden');
+                document.getElementById('login-modal').classList.remove('hidden');
+            });
+            
+            document.getElementById('register-button').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('user-dropdown').classList.add('hidden');
+                document.getElementById('register-modal').classList.remove('hidden');
+            });
+            
+            // Close modals
+            document.getElementById('close-login-modal').addEventListener('click', function() {
+                document.getElementById('login-modal').classList.add('hidden');
+            });
+            
+            document.getElementById('close-register-modal').addEventListener('click', function() {
+                document.getElementById('register-modal').classList.add('hidden');
+            });
+            
+            document.getElementById('close-cart-modal').addEventListener('click', function() {
+                document.getElementById('add-to-cart-modal').classList.add('hidden');
+            });
+            
+            // Switch between login and register
+            document.getElementById('show-register-modal').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('login-modal').classList.add('hidden');
+                document.getElementById('register-modal').classList.remove('hidden');
+            });
+            
+            document.getElementById('show-login-modal').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('register-modal').classList.add('hidden');
+                document.getElementById('login-modal').classList.remove('hidden');
+            });
+            
+            // Login submit
+            document.getElementById('login-submit').addEventListener('click', function() {
+                // Simulate login
+                const email = document.getElementById('login-email').value;
+                if (email) {
+                    document.getElementById('login-modal').classList.add('hidden');
+                    // Update user menu
+                    document.getElementById('login-button').classList.add('hidden');
+                    document.getElementById('register-button').classList.add('hidden');
+                    document.getElementById('account-button').classList.remove('hidden');
+                    document.getElementById('orders-button').classList.remove('hidden');
+                    document.getElementById('logout-button').classList.remove('hidden');
+                    
+                    // Show success message
+                    alert('¡Inicio de sesión exitoso!');
+                } else {
+                    alert('Por favor ingresa un correo electrónico.');
+                }
+            });
+            
+            // Register submit
+            document.getElementById('register-submit').addEventListener('click', function() {
+                // Simulate registration
+                const email = document.getElementById('register-email').value;
+                const faculty = document.getElementById('register-faculty').value;
+                
+                if (email && faculty) {
+                    document.getElementById('register-modal').classList.add('hidden');
+                    // Show success message
+                    alert('¡Registro exitoso! Por favor revisa tu correo para verificar tu cuenta.');
+                } else {
+                    alert('Por favor completa todos los campos requeridos.');
+                }
+            });
+            
+            // Cart button
+            document.getElementById('cart-button').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('cart-page');
+                renderCartItems();
+            });
+            
+            // Explore button
+            document.getElementById('explore-button').addEventListener('click', function() {
+                showPage('products-page');
+            });
+            
+            // Filter button
+            document.getElementById('filter-button').addEventListener('click', function() {
+                document.getElementById('filters-panel').classList.toggle('hidden');
+            });
+            
+            // Apply filters
+            document.getElementById('apply-filters').addEventListener('click', function() {
+                document.getElementById('filters-panel').classList.add('hidden');
+                // In a real app, this would apply the filters and re-render the products
+                alert('Filtros aplicados');
+            });
+            
+            // Clear filters
+            document.getElementById('clear-filters').addEventListener('click', function() {
+                document.getElementById('price-min').value = '';
+                document.getElementById('price-max').value = '';
+                document.getElementById('category-filter').value = '';
+                document.getElementById('faculty-filter').value = '';
+            });
+            
+            // View product detail when clicking product cards
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.view-product')) {
+                    const productId = parseInt(e.target.closest('.view-product').dataset.productId);
+                    showPage('product-detail-page');
+                    renderProductDetail(productId);
+                }
+            });
+            
+            // Back to products
+            document.getElementById('back-to-products').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('products-page');
+            });
+            
+            // Product quantity buttons
+            document.getElementById('decrease-quantity').addEventListener('click', function() {
+                const quantityInput = document.getElementById('product-quantity');
+                let quantity = parseInt(quantityInput.value);
+                if (quantity > 1) {
+                    quantityInput.value = quantity - 1;
+                }
+            });
+            
+            document.getElementById('increase-quantity').addEventListener('click', function() {
+                const quantityInput = document.getElementById('product-quantity');
+                let quantity = parseInt(quantityInput.value);
+                quantityInput.value = quantity + 1;
+            });
+            
+            // Add to cart button
+            document.getElementById('add-to-cart-button').addEventListener('click', function() {
+                const productId = parseInt(document.getElementById('product-title').dataset.productId || getCurrentProductIdFromUrl() || 1);
+                const quantity = parseInt(document.getElementById('product-quantity').value);
+                addToCart(productId, quantity);
+            });
+            
+            // Helper function to get product ID from URL
+            function getCurrentProductIdFromUrl() {
+                // In a real app, this would get the product ID from the URL
+                // For this demo, we'll just return 1
+                return 1;
+            }
+            
+            // Buy now button
+            document.getElementById('buy-now-button').addEventListener('click', function() {
+                const productId = parseInt(document.getElementById('product-title').dataset.productId || getCurrentProductIdFromUrl() || 1);
+                const quantity = parseInt(document.getElementById('product-quantity').value);
+                addToCart(productId, quantity);
+                showPage('checkout-page');
+                renderCheckoutItems();
+            });
+            
+            // Continue shopping from add to cart modal
+            document.getElementById('continue-shopping').addEventListener('click', function() {
+                document.getElementById('add-to-cart-modal').classList.add('hidden');
+            });
+            
+            // Go to cart from add to cart modal
+            document.getElementById('go-to-cart').addEventListener('click', function() {
+                document.getElementById('add-to-cart-modal').classList.add('hidden');
+                showPage('cart-page');
+                renderCartItems();
+            });
+            
+            // Cart remove item
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.cart-remove')) {
+                    const index = parseInt(e.target.closest('.cart-remove').dataset.index);
+                    cart.splice(index, 1);
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartCount();
+                    renderCartItems();
+                }
+            });
+            
+            // Cart decrease quantity
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.cart-decrease')) {
+                    const index = parseInt(e.target.closest('.cart-decrease').dataset.index);
+                    if (cart[index].quantity > 1) {
+                        cart[index].quantity--;
+                        localStorage.setItem('cart', JSON.stringify(cart));
+                        updateCartCount();
+                        renderCartItems();
+                    }
+                }
+            });
+            
+            // Cart increase quantity
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.cart-increase')) {
+                    const index = parseInt(e.target.closest('.cart-increase').dataset.index);
+                    cart[index].quantity++;
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartCount();
+                    renderCartItems();
+                }
+            });
+            
+            // Checkout button
+            document.getElementById('checkout-button').addEventListener('click', function() {
+                showPage('checkout-page');
+                renderCheckoutItems();
+            });
+            
+            // Browse products from empty cart
+            document.getElementById('browse-products-button').addEventListener('click', function() {
+                showPage('products-page');
+            });
+            
+            // Payment method selection
+            const paymentMethods = document.getElementsByName('payment-method');
+            for (let i = 0; i < paymentMethods.length; i++) {
+                paymentMethods[i].addEventListener('change', function() {
+                    document.getElementById('transfer-details').classList.add('hidden');
+                    document.getElementById('cash-details').classList.add('hidden');
+                    
+                    if (this.value === 'transfer') {
+                        document.getElementById('transfer-details').classList.remove('hidden');
+                    } else if (this.value === 'cash') {
+                        document.getElementById('cash-details').classList.remove('hidden');
+                    }
+                });
+            }
+            
+            // Place order button
+            document.getElementById('place-order-button').addEventListener('click', function() {
+                showPage('confirmation-page');
+                renderConfirmationPage();
+            });
+            
+            // Continue shopping from confirmation
+            document.getElementById('continue-shopping-button').addEventListener('click', function() {
+                showPage('home-page');
+            });
+            
+            // Product thumbnail images
+            const thumbnails = document.querySelectorAll('.product-thumbnail');
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function() {
+                    const mainImage = document.getElementById('product-main-image');
+                    mainImage.src = this.querySelector('img').src;
+                });
+            });
+        }
+
+        // Function to show a specific page and hide others
+        function showPage(pageId) {
+            // Hide all pages
+            document.getElementById('home-page').classList.add('hidden');
+            document.getElementById('products-page').classList.add('hidden');
+            document.getElementById('faculties-page').classList.add('hidden');
+            document.getElementById('contact-page').classList.add('hidden');
+            document.getElementById('product-detail-page').classList.add('hidden');
+            document.getElementById('cart-page').classList.add('hidden');
+            document.getElementById('checkout-page').classList.add('hidden');
+            document.getElementById('confirmation-page').classList.add('hidden');
+            
+            // Show the requested page
+            document.getElementById(pageId).classList.remove('hidden');
+            
+            // Close dropdown
+            document.getElementById('user-dropdown').classList.add('hidden');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Initialize the app when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            const userMenu = document.getElementById('user-dropdown');
+            const userMenuButton = document.getElementById('user-menu-button');
+            
+            if (!userMenuButton.contains(e.target) && !userMenu.contains(e.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
